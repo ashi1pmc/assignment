@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+
+<project default="build" basedir=".">
+
+	<property name="src.dir" location="${basedir}/src"/> 
+	<property name="lib.dir" location="${basedir}/lib"/>
+	<property name="dist.dir" location="${basedir}/dist"/>
+	<property name="output.dir" location="${basedir}/output"/>
+    <property name="classes.dir" location="${output.dir}/classes"/>
+<!--	
+    <property name="debug" value="on"/>
+    <property name="optimize" value="off"/>
+    <property name="deprecation" value="off"/>
+-->
+    
+    <path id="ref.classpath">
+        <pathelement path="${lib.dir}/jackson-annotations-2.10.0.jar"/>
+        <pathelement path="${lib.dir}/jackson-core-2.10.0.jar"/>
+        <pathelement path="${lib.dir}/jackson-databind-2.10.0.jar"/>
+    </path>
+
+
+    <target name="echoprops">
+        <echo>src.dir = ${src.dir}</echo>
+        <echo>lib.dir = ${lib.dir}</echo>   
+        <echo>dist.dir = ${dist.dir}</echo>   
+        <echo>output.dir = ${output.dir}</echo>   
+        <echo>classes.dir = ${classes.dir}</echo>   
+    </target>
+
+
+	<target name="create-jar">
+    	<copy todir="${output.dir}">
+    		<fileset dir="${lib.dir}" includes="jackson-annotations-2.10.0.jar"/>
+    		<fileset dir="${lib.dir}" includes="jackson-core-2.10.0.jar"/>
+            <fileset dir="${lib.dir}" includes="jackson-databind-2.10.0.jar"/>
+    	</copy>
+
+    	<!-- create the jar files -->
+        <jar jarfile="${dist.dir}/assignment.jar" >
+        	<manifest>
+                <attribute name="Main-Class" value="com.assignments.Assignment"/>
+                <attribute name="Class-Path" value="${jar.classpath}"/>
+                <attribute name="Manifest-Version" value="1.0"/>
+            </manifest>
+        	
+        	<!-- compiled code -->	
+        	<fileset dir="${classes.dir}"/>
+        	     	
+        	<!-- depenedency -->
+            <zipfileset excludes="META-INF/*.SF" src="${output.dir}/jackson-annotations-2.10.0.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="${output.dir}/jackson-core-2.10.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${output.dir}/jackson-databind-2.10.0.jar"/>
+        </jar>
+    </target>
+
+    <target name="clean" depends="echoprops">
+        <!-- delete directory structure created at run time-->
+        <echo>Deleting classes.dir</echo>
+    	<echo>Deleting output.dir</echo>
+    	<echo>Deleting dist.dir</echo>
+    	
+        <delete dir="${classes.dir}"/>
+        <delete dir="${output.dir}"/>
+    	<delete dir="${dist.dir}"/>
+    </target>
+	
+    <target name="setup">
+        <!-- prepare the directory structure -->
+    	<mkdir dir="${output.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+    	<mkdir dir="${dist.dir}"/>
+    </target>
+	
+    <target name="compile" depends="setup">
+        <!-- build the src -->
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" >
+        	<classpath refid="ref.classpath"/>
+        </javac>
+    </target>
+	
+	<target name="build" depends = "clean, compile">
+		<antcall target="create-jar"/>
+	</target>
+</project>
