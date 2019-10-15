@@ -7,16 +7,18 @@
 	<property name="dist.dir" location="${basedir}/dist"/>
 	<property name="output.dir" location="${basedir}/output"/>
     <property name="classes.dir" location="${output.dir}/classes"/>
-<!--	
-    <property name="debug" value="on"/>
-    <property name="optimize" value="off"/>
-    <property name="deprecation" value="off"/>
--->
+	<property name="test.dir" location="${basedir}/test"/> 
+	<property name="classes.test.dir" location="${output.dir}/classes-test"/>
     
     <path id="ref.classpath">
         <pathelement path="${lib.dir}/jackson-annotations-2.10.0.jar"/>
         <pathelement path="${lib.dir}/jackson-core-2.10.0.jar"/>
         <pathelement path="${lib.dir}/jackson-databind-2.10.0.jar"/>
+    </path>
+	<path id="ref.test.classpath">
+        <pathelement path="${dist.dir}/assignment.jar"/>
+		<pathelement path="${lib.dir}/junit-4.13-beta-3.jar"/>
+		<pathelement path="${lib.dir}/hamcrest-core-1.3.jar"/>
     </path>
 
 
@@ -53,14 +55,39 @@
             <zipfileset excludes="META-INF/*.SF" src="${output.dir}/jackson-databind-2.10.0.jar"/>
         </jar>
     </target>
+	
+	<target name="create-test-jar" depends="compile-test">
+		<copy todir="${output.dir}">
+    		<fileset dir="${lib.dir}" includes="junit-4.13-beta-3.jar"/>
+			<fileset dir="${lib.dir}" includes="hamcrest-core-1.3.jar"/>
+    	</copy>
+    	<!-- create the jar files -->
+        <jar jarfile="${dist.dir}/assignment-test.jar" >
+        	<manifest>
+                <attribute name="Main-Class" value="com.assignments.AssignmentTest"/>
+                <attribute name="Class-Path" value="${jar.classpath}"/>
+                <attribute name="Manifest-Version" value="1.0"/>
+            </manifest>
+        	
+        	<!-- compiled code -->	
+        	<fileset dir="${classes.test.dir}"/>
+        	     	
+        	<!-- depenedency -->
+            <zipfileset excludes="META-INF/*.SF" src="${dist.dir}/assignment.jar"/>
+        	<zipfileset excludes="META-INF/*.SF" src="${output.dir}/junit-4.13-beta-3.jar"/>
+        	<zipfileset excludes="META-INF/*.SF" src="${output.dir}/hamcrest-core-1.3.jar"/>
+        </jar>
+    </target>
 
     <target name="clean" depends="echoprops">
         <!-- delete directory structure created at run time-->
-        <echo>Deleting classes.dir</echo>
+    	<echo>Deleting classes.test.dir</echo>
+    	<echo>Deleting classes.dir</echo>
     	<echo>Deleting output.dir</echo>
     	<echo>Deleting dist.dir</echo>
     	
-        <delete dir="${classes.dir}"/>
+    	<delete dir="${classes.test.dir}"/>
+    	<delete dir="${classes.dir}"/>
         <delete dir="${output.dir}"/>
     	<delete dir="${dist.dir}"/>
     </target>
@@ -70,6 +97,7 @@
     	<mkdir dir="${output.dir}"/>
         <mkdir dir="${classes.dir}"/>
     	<mkdir dir="${dist.dir}"/>
+    	<mkdir dir="${classes.test.dir}"/>
     </target>
 	
     <target name="compile" depends="setup">
@@ -79,7 +107,16 @@
         </javac>
     </target>
 	
+    <target name="compile-test">
+        <!-- build the src -->
+    	<javac srcdir="${test.dir}" destdir="${classes.test.dir}" >
+        	<classpath refid="ref.classpath"/>
+    		<classpath refid="ref.test.classpath"/>
+        </javac>
+    </target>
+	
 	<target name="build" depends = "clean, compile">
 		<antcall target="create-jar"/>
+		<antcall target="create-test-jar"/>
 	</target>
 </project>

@@ -1,19 +1,18 @@
 package com.assignments;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import com.assignments.pojo.Planet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-class AssignmentTest {
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class AssignmentTest {
 
 	@Test
-	void testHotestStarName() throws JsonProcessingException {
+	public void testHotestStarName() throws JsonProcessingException {
 		
 		List<Planet> dataObj = TestUtil.getValidTestData();
 		
@@ -27,7 +26,7 @@ class AssignmentTest {
 	}
 	
 	@Test
-	void testYearsCount() throws JsonProcessingException {
+	public void testYearsCount() throws JsonProcessingException {
 		
 		List<Planet> dataObj = TestUtil.getValidTestData();
 		
@@ -41,7 +40,7 @@ class AssignmentTest {
 	}
 	
 	@Test
-	void testOrphanPlanetCount() throws JsonProcessingException {
+	public void testOrphanPlanetCount() throws JsonProcessingException {
 		
 		List<Planet> dataObj = TestUtil.getValidTestData();
 		
@@ -55,7 +54,7 @@ class AssignmentTest {
 	}
 	
 	@Test
-	void testInvalidDataSet() throws JsonProcessingException {
+	public void testInvalidDataSet() throws JsonProcessingException {
 		
 		List<Planet> dataObj = TestUtil.getInValidTestData();
 		

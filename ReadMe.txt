@@ -50,3 +50,7 @@ To "Run" code
 2. Run the following command "java -jar path_to_assignment.jar"
 
 For quick run\access, assignment.jar is already submitted to dist directory.
+
+To run "Unit Tests"
+1. Open command line, browse to dist directory
+2. Run the following command "java -cp assignment-test.jar com.assignments.TestRunner"
